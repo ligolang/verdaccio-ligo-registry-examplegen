@@ -6,6 +6,6 @@ export declare function addScope(scope: string, packageName: string): string;
 export default class VerdaccioMiddlewarePlugin implements IPluginMiddleware<CustomConfig> {
     logger: Logger;
     client: Client;
-    constructor(config: CustomConfig, options: PluginOptions<CustomConfig>);
+    constructor(options: PluginOptions<CustomConfig>);
     register_middlewares(app: Application): void;
 }

@@ -26,7 +26,17 @@ export default class VerdaccioMiddlewarePlugin
       const router = Router();
       this.client.connect();
       router.get(
-        "/examplegen/(@:scope/)?:packageName/:version",
+        "/all",
+        async (
+          _request: Request,
+          response: Response & { report_error?: Function }
+        ): Promise<void> => {
+          let res = await this.client.query("SELECT * FROM publish");
+          response.status(200).json(res.rows);
+        }
+      );
+      router.get(
+        "/(@:scope/)?:packageName/:version",
         async (
           request: Request,
           response: Response & { report_error?: Function },
@@ -44,7 +54,7 @@ export default class VerdaccioMiddlewarePlugin
           response.status(200).json(res.rows);
         }
       );
-      app.use("/", router);
+      app.use("/examplegen", router);
       debug("registered");
     } catch (e) {
       this.client.end();
