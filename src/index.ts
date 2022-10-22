@@ -36,11 +36,23 @@ export default class VerdaccioMiddlewarePlugin
         }
       );
       router.get(
+        "/:id",
+        async (
+          request: Request,
+          response: Response & { report_error?: Function }
+        ): Promise<void> => {
+          let res = await this.client.query(
+            "SELECT * FROM publish WHERE id = $1",
+            [parseInt(request.params.id)]
+          );
+          response.status(200).json(res.rows);
+        }
+      );
+      router.get(
         "/(@:scope/)?:packageName/:version",
         async (
           request: Request,
-          response: Response & { report_error?: Function },
-          next: NextFunction
+          response: Response & { report_error?: Function }
         ): Promise<void> => {
           const packageName = request.params.scope
             ? addScope(request.params.scope, request.params.packageName)
@@ -49,6 +61,7 @@ export default class VerdaccioMiddlewarePlugin
           debug(packageName, version);
           let res = await this.client.query(
             "SELECT * FROM publish WHERE name = $1 and version = $2",
+            // TODO validate packageName and version
             [packageName, version]
           );
           response.status(200).json(res.rows);
